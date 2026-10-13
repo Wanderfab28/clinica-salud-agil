@@ -2,31 +2,53 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected $table = 'usuarios';
+
+    protected $primaryKey = 'id_usuario';
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id_rol',
+        'nombre_completo',
+        'correo',
+        'contrasena',
+        'activo',
+    ];
+
+    protected $hidden = [
+        'contrasena',
+    ];
+
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'contrasena' => 'hashed',
+            'activo' => 'boolean',
+            'fecha_creacion' => 'datetime',
         ];
+    }
+
+    public function getAuthPasswordName(): string
+    {
+        return 'contrasena';
+    }
+
+    public function getAuthPassword(): string
+    {
+        return $this->contrasena;
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'id_usuario';
     }
 }
